@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>VeilPay — Gizli Payroll</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; background:#0f1115; color:#e8e8e8; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 16px; margin-top: 32px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+  .panel { background:#171a21; border:1px solid #2a2e38; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+  input { width: 100%; box-sizing: border-box; padding: 8px; margin: 6px 0; background:#0f1115; border:1px solid #333; color:#eee; border-radius:6px; }
+  button { padding: 8px 14px; background:#3b6ef6; color:white; border:none; border-radius:6px; cursor:pointer; margin-top:6px; }
+  button:hover { background:#2f5cd6; }
+  .result { margin-top: 10px; padding: 10px; background:#0f1115; border-radius:6px; word-break: break-all; font-family: monospace; font-size: 13px; }
+  .status { font-size: 13px; color: #9aa0aa; margin-bottom: 10px; }
+  label { font-size: 13px; color:#9aa0aa; }
+</style>
+</head>
+<body>
+
+<h1>VeilPay — Arc Network Gizli Payroll</h1>
+<div class="status" id="connectionStatus">Cüzdan bağlı değil.</div>
+<button onclick="connectWallet()">Cüzdanı Bağla</button>
+
+<div class="panel">
+  <h2>İşveren — Çalışan Ekle</h2>
+  <label>Çalışan adresi</label>
+  <input id="newEmployeeAddress" placeholder="0x...">
+  <button onclick="addEmployee()">Çalışan Ekle</button>
+  <div class="result" id="addEmployeeResult"></div>
+</div>
+
+<div class="panel">
+  <h2>İşveren — Gizli Maaş Öde</h2>
+  <label>Çalışan adresi</label>
+  <input id="payEmployeeAddress" placeholder="0x...">
+  <label>Maaş tutarı (sadece gösterim/şifreleme için, düz metin olarak zincire GİTMEZ)</label>
+  <input id="paySalaryAmount" type="number" placeholder="ör. 5000">
+  <label>Paylaşılan şifre (employer ile employee arasında önceden anlaşılmış, zincire gitmez)</label>
+  <input id="paySharedSecret" type="password" placeholder="ör. ortak-parola-123">
+  <label>Toplam payroll'a eklenecek açık tutar (public, audit için)</label>
+  <input id="payPublicTotal" type="number" placeholder="ör. 5000">
+  <button onclick="paySalary()">Şifrele ve Öde</button>
+  <div class="result" id="paySalaryResult"></div>
+</div>
+
+<div class="panel">
+  <h2>Çalışan — Kendi Maaşımı Gör</h2>
+  <label>Şifre çözmek için paylaşılan şifre</label>
+  <input id="mySharedSecret" type="password" placeholder="ör. ortak-parola-123">
+  <button onclick="getMySalary()">Maaşımı Getir ve Çöz</button>
+  <div class="result" id="mySalaryResult"></div>
+</div>
+
+<div class="panel">
+  <h2>Denetçi — Yetkiliyse Başka Bir Çalışanın Maaşını Gör</h2>
+  <label>Sorgulanacak çalışan adresi</label>
+  <input id="auditEmployeeAddress" placeholder="0x...">
+  <label>Şifre çözmek için paylaşılan şifre (çalışandan alınmış olmalı)</label>
+  <input id="auditSharedSecret" type="password" placeholder="ör. ortak-parola-123">
+  <button onclick="getAsAuditor()">Denetçi Olarak Getir ve Çöz</button>
+  <div class="result" id="auditResult"></div>
+</div>
+
+<div class="panel">
+  <h2>Toplam Ödenen (Public)</h2>
+  <button onclick="getTotalPaidOut()">Toplamı Göster</button>
+  <div class="result" id="totalResult"></div>
+</div>
+
+<script>
+const VEILPAY_ADDRESS = "0xbFD6e8525F91595916E9a2DCb4Ff9084A19ada11";
+
+const VEILPAY_ABI = [
+  "function addEmployee(address employeeAddress) external",
+  "function paySalary(address employeeAddress, bytes calldata encryptedAmount, uint256 publicAmountForTotal) external",
+  "function getMySalaryData() external view returns (bytes memory)",
+  "function grantAuditorAccess(address auditor) external",
+  "function getEmployeeSalaryDataAsAuditor(address employeeAddress) external view returns (bytes memory)",
+  "function totalPaidOut() external view returns (uint256)"
+];
+
+let provider, signer, contract;
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    document.getElementById("connectionStatus").innerText = "Tarayıcıda cüzdan uzantısı bulunamadı.";
+    return;
+  }
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+  contract = new ethers.Contract(VEILPAY_ADDRESS, VEILPAY_ABI, signer);
+  const address = await signer.getAddress();
+  const network = await provider.getNetwork();
+  document.getElementById("connectionStatus").innerText =
+    `Bağlandı: ${address} (chainId: ${network.chainId})`;
+}
+
+// --- Basit AES-GCM sifreleme (paylasilan sifreden anahtar turetir) ---
+async function deriveKey(sharedSecret) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw", enc.encode(sharedSecret), { name: "PBKDF2" }, false, ["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: enc.encode("veilpay-salt"), iterations: 100000, hash: "SHA-256" },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+}
+
+async function encryptAmount(amount, sharedSecret) {
+  const key = await deriveKey(sharedSecret);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv }, key, enc.encode(String(amount))
+  );
+  const combined = new Uint8Array(iv.length + ciphertext.byteLength);
+  combined.set(iv, 0);
+  combined.set(new Uint8Array(ciphertext), iv.length);
+  return "0x" + Array.from(combined).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function decryptAmount(hexData, sharedSecret) {
+  const key = await deriveKey(sharedSecret);
+  const bytes = ethers.utils.arrayify(hexData);
+  const iv = bytes.slice(0, 12);
+  const ciphertext = bytes.slice(12);
+  const dec = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  return new TextDecoder().decode(dec);
+}
+
+// --- Kontrat etkilesimleri ---
+async function addEmployee() {
+  try {
+    const addr = document.getElementById("newEmployeeAddress").value;
+    const tx = await contract.addEmployee(addr);
+    await tx.wait();
+    document.getElementById("addEmployeeResult").innerText = "Çalışan eklendi: " + addr;
+  } catch (e) {
+    document.getElementById("addEmployeeResult").innerText = "Hata: " + (e.reason || e.message);
+  }
+}
+
+async function paySalary() {
+  try {
+    const addr = document.getElementById("payEmployeeAddress").value;
+    const amount = document.getElementById("paySalaryAmount").value;
+    const secret = document.getElementById("paySharedSecret").value;
+    const publicTotal = document.getElementById("payPublicTotal").value;
+
+    const encrypted = await encryptAmount(amount, secret);
+    const tx = await contract.paySalary(addr, encrypted, publicTotal);
+    await tx.wait();
+    document.getElementById("paySalaryResult").innerText =
+      "Ödeme gönderildi. Zincirdeki şifreli veri: " + encrypted;
+  } catch (e) {
+    document.getElementById("paySalaryResult").innerText = "Hata: " + (e.reason || e.message);
+  }
+}
+
+async function getMySalary() {
+  try {
+    const secret = document.getElementById("mySharedSecret").value;
+    const encrypted = await contract.getMySalaryData();
+    const decrypted = await decryptAmount(encrypted, secret);
+    document.getElementById("mySalaryResult").innerText = "Maaşınız: " + decrypted;
+  } catch (e) {
+    document.getElementById("mySalaryResult").innerText = "Hata: " + (e.reason || e.message);
+  }
+}
+
+async function getAsAuditor() {
+  try {
+    const addr = document.getElementById("auditEmployeeAddress").value;
+    const secret = document.getElementById("auditSharedSecret").value;
+    const encrypted = await contract.getEmployeeSalaryDataAsAuditor(addr);
+    const decrypted = await decryptAmount(encrypted, secret);
+    document.getElementById("auditResult").innerText = "Çalışanın maaşı: " + decrypted;
+  } catch (e) {
+    document.getElementById("auditResult").innerText = "Hata: " + (e.reason || e.message);
+  }
+}
+
+async function getTotalPaidOut() {
+  try {
+    const total = await contract.totalPaidOut();
+    document.getElementById("totalResult").innerText = "Toplam ödenen: " + total.toString();
+  } catch (e) {
+    document.getElementById("totalResult").innerText = "Hata: " + (e.reason || e.message);
+  }
+}
+</script>
+</body>
+</html>
