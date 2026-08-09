@@ -1,200 +1,406 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VeilPay — Gizli Payroll</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeilPay — Confidential Payroll on Arc</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
-  body { font-family: -apple-system, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; background:#0f1115; color:#e8e8e8; }
-  h1 { font-size: 22px; }
-  h2 { font-size: 16px; margin-top: 32px; border-bottom: 1px solid #333; padding-bottom: 8px; }
-  .panel { background:#171a21; border:1px solid #2a2e38; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-  input { width: 100%; box-sizing: border-box; padding: 8px; margin: 6px 0; background:#0f1115; border:1px solid #333; color:#eee; border-radius:6px; }
-  button { padding: 8px 14px; background:#3b6ef6; color:white; border:none; border-radius:6px; cursor:pointer; margin-top:6px; }
-  button:hover { background:#2f5cd6; }
-  .result { margin-top: 10px; padding: 10px; background:#0f1115; border-radius:6px; word-break: break-all; font-family: monospace; font-size: 13px; }
-  .status { font-size: 13px; color: #9aa0aa; margin-bottom: 10px; }
-  label { font-size: 13px; color:#9aa0aa; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #ffffff;
+    color: #16181d;
+  }
+  a { text-decoration: none; color: inherit; }
+
+  .page { max-width: 1160px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 0 24px; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .logo-block { display: flex; flex-direction: column; align-items: flex-start; }
+  .logo { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .logo .veil { color: #16181d; }
+  .logo .pay { color: #5b3df5; }
+  .tagline { margin-top: 6px; font-size: 12.5px; color: #6b7280; max-width: 360px; line-height: 1.45; text-align: left; }
+
+  .nav {
+    display: flex; align-items: center; gap: 26px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
+    color: #6b7280; margin-top: 8px;
+  }
+  .nav a:hover { color: #16181d; }
+
+  .account-block { text-align: right; }
+  .account-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #9aa0ac;
+    margin-bottom: 8px;
+  }
+  .connect-btn {
+    background: #16181d; color: white; border: none;
+    padding: 10px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+    cursor: pointer;
+  }
+  .connect-btn:hover { background: #2a2d36; }
+  .wallet-info { display: none; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .wallet-info.show { display: flex; }
+  .wallet-addr { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; color: #6b7280; }
+  .network-badge {
+    display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
+    color: #16a34a; background: #ecfdf3; border: 1px solid #bbf0cf;
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .disconnect-link {
+    font-size: 11.5px; color: #9aa0ac; cursor: pointer; margin-top: 2px;
+  }
+  .disconnect-link:hover { color: #16181d; }
+
+  /* Hero carousel */
+  .hero-wrap { padding: 0; }
+  .hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #2a1f7a, #5b3df5);
+    border-radius: 18px;
+    height: 240px;
+    color: white;
+  }
+  .hero-slide {
+    position: absolute; inset: 0;
+    padding: 30px 40px 0;
+    opacity: 0; transition: opacity 0.4s ease;
+    display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .hero-slide.active { opacity: 1; }
+  .hero-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #f5a623; display: flex; align-items: center; justify-content: center;
+    font-size: 19px; margin-bottom: 14px; flex-shrink: 0;
+  }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 8px; }
+  .hero-title { font-size: 24px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; max-width: 620px; }
+  .hero-desc { font-size: 13px; line-height: 1.5; opacity: 0.9; max-width: 560px; }
+
+  .hero-nav {
+    position: absolute; left: 40px; right: 40px; bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 3;
+  }
+  .hero-arrow {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); border: none; color: white;
+    font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .hero-arrow:hover { background: rgba(255,255,255,0.22); }
+  .hero-dots { display: flex; gap: 7px; }
+  .hero-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.08); cursor: pointer;
+  }
+  .hero-dot.active { background: white; color: #2a1f7a; }
+
+  /* Module strip */
+  .strip-wrap {
+    padding: 4px 0 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .strip-wrap::before, .strip-wrap::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 50px; z-index: 2;
+  }
+  .strip-wrap::before { left: 0; background: linear-gradient(90deg, #fff, rgba(255,255,255,0)); }
+  .strip-wrap::after { right: 0; background: linear-gradient(270deg, #fff, rgba(255,255,255,0)); }
+  .strip-header {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #6b7280;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .strip-loading { color: #6b7280 !important; font-weight: 600 !important; background: transparent !important; }
+  .strip-item .addr { font-family: 'SF Mono', Consolas, monospace; font-weight: 700; color: #16181d; }
+  .strip-item .action { color: #4b5060; font-weight: 500; font-size: 13.5px; }
+  .strip-item .time { color: #9aa0ac; font-weight: 600; font-size: 12px; }
+  .strip {
+    display: flex; gap: 14px; align-items: center;
+    animation: scroll-strip 26s linear infinite;
+    width: max-content;
+  }
+  .strip-item {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 14px; font-weight: 700; color: #16181d; white-space: nowrap;
+    background: #f5f4fd; border: 1px solid #e9e6fb;
+    padding: 9px 16px; border-radius: 24px;
+  }
+  .strip-item .ico { font-size: 15px; }
+  @keyframes scroll-strip {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Cards */
+  .section { padding: 0; }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card {
+    border: 1px solid #e6e8ec; border-radius: 14px; padding: 18px 20px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover { border-color: #5b3df5; transform: translateY(-2px); }
+  .card-icon {
+    width: 34px; height: 34px; border-radius: 9px; background: #f3f0ff;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px;
+  }
+  .card h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
+  .card p { font-size: 12px; color: #6b7280; line-height: 1.4; margin-bottom: 10px; }
+  .card-link { font-size: 11.5px; color: #5b3df5; font-weight: 700; }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid #e6e8ec;
+    padding: 12px 0 0; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+    font-size: 11px; color: #9aa0ac; font-family: 'SF Mono', Consolas, monospace;
+  }
+  .footer a { color: #5b3df5; font-family: -apple-system, sans-serif; font-weight: 600; }
+
+  @media (max-width: 720px) {
+    html, body { overflow: auto; }
+    .page { height: auto; padding: 20px; }
+    .nav { display: none; }
+    .hero { height: 300px; }
+    .hero-title { font-size: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .footer { flex-direction: column; align-items: flex-start; }
+  }
 </style>
 </head>
 <body>
+<div class="page">
 
-<h1>VeilPay — Arc Network Gizli Payroll</h1>
-<div class="status" id="connectionStatus">Cüzdan bağlı değil.</div>
-<button onclick="connectWallet()">Cüzdanı Bağla</button>
-
-<div class="panel">
-  <h2>İşveren — Çalışan Ekle</h2>
-  <label>Çalışan adresi</label>
-  <input id="newEmployeeAddress" placeholder="0x...">
-  <button onclick="addEmployee()">Çalışan Ekle</button>
-  <div class="result" id="addEmployeeResult"></div>
+<div class="header">
+  <div class="logo-block">
+    <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
+    <div class="tagline">Confidential payroll built on Arc Network. A working demonstration of what Arc's privacy architecture can enable.</div>
+  </div>
+  <div class="nav">
+    <a href="/employer/">EMPLOYER</a>
+    <a href="/employee/">EMPLOYEE</a>
+    <a href="/auditor/">AUDITOR</a>
+    <a href="https://github.com/0xAlpagu/veilpay" target="_blank">GITHUB</a>
+  </div>
+  <div class="account-block">
+    <div class="account-label">MY ACCOUNT</div>
+    <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
+    <div class="wallet-info" id="walletInfo">
+      <div class="wallet-addr" id="walletAddr"></div>
+      <div class="network-badge">ARC TESTNET</div>
+      <div class="disconnect-link" onclick="disconnectWallet()">Disconnect</div>
+    </div>
+  </div>
 </div>
 
-<div class="panel">
-  <h2>İşveren — Gizli Maaş Öde</h2>
-  <label>Çalışan adresi</label>
-  <input id="payEmployeeAddress" placeholder="0x...">
-  <label>Maaş tutarı (sadece gösterim/şifreleme için, düz metin olarak zincire GİTMEZ)</label>
-  <input id="paySalaryAmount" type="number" placeholder="ör. 5000">
-  <label>Paylaşılan şifre (employer ile employee arasında önceden anlaşılmış, zincire gitmez)</label>
-  <input id="paySharedSecret" type="password" placeholder="ör. ortak-parola-123">
-  <label>Toplam payroll'a eklenecek açık tutar (public, audit için)</label>
-  <input id="payPublicTotal" type="number" placeholder="ör. 5000">
-  <button onclick="paySalary()">Şifrele ve Öde</button>
-  <div class="result" id="paySalaryResult"></div>
+<div class="hero-wrap">
+  <div class="hero" id="hero">
+
+    <div class="hero-slide active">
+      <div class="hero-icon">🔐</div>
+      <div class="hero-label">ENCRYPTION</div>
+      <div class="hero-title">Salary amounts, encrypted before they ever touch the chain.</div>
+      <div class="hero-desc">Every payment is encrypted client-side with AES-256-GCM before it's sent. The contract only ever stores ciphertext — never a plaintext number.</div>
+    </div>
+
+    <div class="hero-slide">
+      <div class="hero-icon">👁️</div>
+      <div class="hero-label">SELECTIVE DISCLOSURE</div>
+      <div class="hero-title">Only the people you choose can see the number.</div>
+      <div class="hero-desc">Employees decrypt their own salary. Auditors or HR can be granted access explicitly — nobody else, including other employees, can read it.</div>
+    </div>
+
+    <div class="hero-slide">
+      <div class="hero-icon">💵</div>
+      <div class="hero-label">REAL SETTLEMENT</div>
+      <div class="hero-title">Funded and paid out in real USDC.</div>
+      <div class="hero-desc">Payroll is funded on-chain in USDC and withdrawn directly to the employee's wallet. Encryption protects the amount right up until withdrawal.</div>
+    </div>
+
+    <div class="hero-slide">
+      <div class="hero-icon">🧭</div>
+      <div class="hero-label">ARC PRIVACY ROADMAP</div>
+      <div class="hero-title">Built to plug into Arc's upcoming privacy precompile.</div>
+      <div class="hero-desc">Designed against the interface described in Circle's Arc Privacy Sector whitepaper, so it's forward-compatible once the real precompile ships on testnet.</div>
+    </div>
+
+    <div class="hero-nav">
+      <button class="hero-arrow" onclick="prevSlide()">←</button>
+      <div class="hero-dots" id="heroDots"></div>
+      <button class="hero-arrow" onclick="nextSlideManual()">→</button>
+    </div>
+  </div>
 </div>
 
-<div class="panel">
-  <h2>Çalışan — Kendi Maaşımı Gör</h2>
-  <label>Şifre çözmek için paylaşılan şifre</label>
-  <input id="mySharedSecret" type="password" placeholder="ör. ortak-parola-123">
-  <button onclick="getMySalary()">Maaşımı Getir ve Çöz</button>
-  <div class="result" id="mySalaryResult"></div>
+<div class="strip-wrap">
+  <div class="strip-header">Live activity — who got paid, not how much</div>
+  <div class="strip" id="strip">
+    <div class="strip-item strip-loading">Loading on-chain activity…</div>
+  </div>
 </div>
 
-<div class="panel">
-  <h2>Denetçi — Yetkiliyse Başka Bir Çalışanın Maaşını Gör</h2>
-  <label>Sorgulanacak çalışan adresi</label>
-  <input id="auditEmployeeAddress" placeholder="0x...">
-  <label>Şifre çözmek için paylaşılan şifre (çalışandan alınmış olmalı)</label>
-  <input id="auditSharedSecret" type="password" placeholder="ör. ortak-parola-123">
-  <button onclick="getAsAuditor()">Denetçi Olarak Getir ve Çöz</button>
-  <div class="result" id="auditResult"></div>
+<div class="section">
+  <div class="card-grid">
+    <a href="/employer/" class="card">
+      <div class="card-icon">🏢</div>
+      <h3>Employer</h3>
+      <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
+    <a href="/employee/" class="card">
+      <div class="card-icon">🙋</div>
+      <h3>Employee</h3>
+      <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
+    <a href="/auditor/" class="card">
+      <div class="card-icon">🔎</div>
+      <h3>Auditor</h3>
+      <p>View an employee's salary, if they've granted you access.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
+  </div>
 </div>
 
-<div class="panel">
-  <h2>Toplam Ödenen (Public)</h2>
-  <button onclick="getTotalPaidOut()">Toplamı Göster</button>
-  <div class="result" id="totalResult"></div>
+<div class="footer">
+  <div>Arc Network Testnet · Chain ID <b>5042002</b> &nbsp; USDC <b id="fUsdc"></b> &nbsp; VeilPay <b id="fVeilpay"></b></div>
+  <a href="https://github.com/0xAlpagu/veilpay" target="_blank">View source on GitHub</a>
+</div>
+
 </div>
 
 <script>
-const VEILPAY_ADDRESS = "0xbFD6e8525F91595916E9a2DCb4Ff9084A19ada11";
+// Contract addresses (footer, truncated display)
+document.getElementById("fUsdc").innerText = "0x3600...0000";
+document.getElementById("fVeilpay").innerText = "0xe472...4DdaA";
 
-const VEILPAY_ABI = [
-  "function addEmployee(address employeeAddress) external",
-  "function paySalary(address employeeAddress, bytes calldata encryptedAmount, uint256 publicAmountForTotal) external",
-  "function getMySalaryData() external view returns (bytes memory)",
-  "function grantAuditorAccess(address auditor) external",
-  "function getEmployeeSalaryDataAsAuditor(address employeeAddress) external view returns (bytes memory)",
-  "function totalPaidOut() external view returns (uint256)"
+// Live activity strip — pulls real SalaryAllocated / SalaryWithdrawn events.
+// Shows WHO was paid and WHEN, never the amount — the point of the product, made visible.
+const VEILPAY_ADDRESS_RO = "0xe47234f87382335862Dc2987E48ab9338ea4DdaA";
+const ARC_RPC = "https://rpc.testnet.arc.network";
+const EVENT_ABI = [
+  "event SalaryAllocated(address indexed employee, uint256 timestamp)",
+  "event SalaryWithdrawn(address indexed employee, uint256 amount)"
 ];
 
-let provider, signer, contract;
+function shortAddr(a) { return a.slice(0,6) + "..." + a.slice(-4); }
+function timeAgo(unixSeconds) {
+  const diff = Math.floor(Date.now()/1000) - unixSeconds;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return Math.floor(diff/60) + "m ago";
+  if (diff < 86400) return Math.floor(diff/3600) + "h ago";
+  return Math.floor(diff/86400) + "d ago";
+}
 
-async function connectWallet() {
-  if (!window.ethereum) {
-    document.getElementById("connectionStatus").innerText = "Tarayıcıda cüzdan uzantısı bulunamadı.";
-    return;
+async function loadActivityStrip() {
+  const strip = document.getElementById("strip");
+  try {
+    const roProvider = new ethers.providers.JsonRpcProvider(ARC_RPC);
+    const roContract = new ethers.Contract(VEILPAY_ADDRESS_RO, EVENT_ABI, roProvider);
+
+    const [allocatedEvents, withdrawnEvents] = await Promise.all([
+      roContract.queryFilter(roContract.filters.SalaryAllocated(), -50000),
+      roContract.queryFilter(roContract.filters.SalaryWithdrawn(), -50000)
+    ]);
+
+    let items = [
+      ...allocatedEvents.map(e => ({ addr: e.args.employee, action: "was allocated a payment", block: e.blockNumber, icon: "🔐" })),
+      ...withdrawnEvents.map(e => ({ addr: e.args.employee, action: "withdrew their pay", block: e.blockNumber, icon: "💸" }))
+    ];
+
+    if (items.length === 0) {
+      strip.innerHTML = `<div class="strip-item strip-loading">No activity yet — be the first to run payroll on VeilPay.</div>`;
+      return;
+    }
+
+    // dedupe block numbers, fetch timestamps
+    const uniqueBlocks = [...new Set(items.map(i => i.block))];
+    const roJson = new ethers.providers.JsonRpcProvider(ARC_RPC);
+    const blockTimestamps = {};
+    await Promise.all(uniqueBlocks.map(async b => {
+      const block = await roJson.getBlock(b);
+      blockTimestamps[b] = block.timestamp;
+    }));
+
+    items = items
+      .map(i => ({ ...i, ts: blockTimestamps[i.block] }))
+      .sort((a, b) => b.ts - a.ts)
+      .slice(0, 12);
+
+    const renderItems = [...items, ...items]; // duplicate for seamless scroll
+    strip.innerHTML = "";
+    renderItems.forEach(i => {
+      const el = document.createElement("div");
+      el.className = "strip-item";
+      el.innerHTML = `<span class="ico">${i.icon}</span><span class="addr">${shortAddr(i.addr)}</span><span class="action">${i.action}</span><span class="time">${timeAgo(i.ts)}</span>`;
+      strip.appendChild(el);
+    });
+  } catch (e) {
+    strip.innerHTML = `<div class="strip-item strip-loading">Activity feed unavailable right now.</div>`;
   }
+}
+loadActivityStrip();
+
+// Hero carousel
+let slideIndex = 0;
+const slides = document.querySelectorAll(".hero-slide");
+const dotsContainer = document.getElementById("heroDots");
+slides.forEach((_, i) => {
+  const dot = document.createElement("div");
+  dot.className = "hero-dot" + (i === 0 ? " active" : "");
+  dot.innerText = i + 1;
+  dot.onclick = () => { goToSlide(i); resetTimer(); };
+  dot.onmouseenter = () => { goToSlide(i); resetTimer(); };
+  dotsContainer.appendChild(dot);
+});
+const dots = document.querySelectorAll(".hero-dot");
+
+function goToSlide(i) {
+  slides[slideIndex].classList.remove("active");
+  dots[slideIndex].classList.remove("active");
+  slideIndex = i;
+  slides[slideIndex].classList.add("active");
+  dots[slideIndex].classList.add("active");
+}
+function nextSlide() { goToSlide((slideIndex + 1) % slides.length); }
+function nextSlideManual() { nextSlide(); resetTimer(); }
+function prevSlide() { goToSlide((slideIndex - 1 + slides.length) % slides.length); resetTimer(); }
+
+let timer = setInterval(nextSlide, 4500);
+function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 4500); }
+
+// Wallet
+let provider, signer;
+async function connectWallet() {
+  if (!window.ethereum) return;
   provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
   signer = provider.getSigner();
-  contract = new ethers.Contract(VEILPAY_ADDRESS, VEILPAY_ABI, signer);
   const address = await signer.getAddress();
-  const network = await provider.getNetwork();
-  document.getElementById("connectionStatus").innerText =
-    `Bağlandı: ${address} (chainId: ${network.chainId})`;
+  document.getElementById("walletAddr").innerText = address.slice(0,6) + "..." + address.slice(-4);
+  document.getElementById("walletInfo").classList.add("show");
+  document.getElementById("connectBtn").style.display = "none";
+  localStorage.setItem("veilpay_autoconnect", "1");
 }
-
-// --- Basit AES-GCM sifreleme (paylasilan sifreden anahtar turetir) ---
-async function deriveKey(sharedSecret) {
-  const enc = new TextEncoder();
-  const keyMaterial = await crypto.subtle.importKey(
-    "raw", enc.encode(sharedSecret), { name: "PBKDF2" }, false, ["deriveKey"]
-  );
-  return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: enc.encode("veilpay-salt"), iterations: 100000, hash: "SHA-256" },
-    keyMaterial,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt", "decrypt"]
-  );
+function disconnectWallet() {
+  provider = null; signer = null;
+  localStorage.removeItem("veilpay_autoconnect");
+  document.getElementById("walletInfo").classList.remove("show");
+  document.getElementById("connectBtn").style.display = "inline-block";
 }
-
-async function encryptAmount(amount, sharedSecret) {
-  const key = await deriveKey(sharedSecret);
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const enc = new TextEncoder();
-  const ciphertext = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv }, key, enc.encode(String(amount))
-  );
-  const combined = new Uint8Array(iv.length + ciphertext.byteLength);
-  combined.set(iv, 0);
-  combined.set(new Uint8Array(ciphertext), iv.length);
-  return "0x" + Array.from(combined).map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function decryptAmount(hexData, sharedSecret) {
-  const key = await deriveKey(sharedSecret);
-  const bytes = ethers.utils.arrayify(hexData);
-  const iv = bytes.slice(0, 12);
-  const ciphertext = bytes.slice(12);
-  const dec = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ciphertext);
-  return new TextDecoder().decode(dec);
-}
-
-// --- Kontrat etkilesimleri ---
-async function addEmployee() {
-  try {
-    const addr = document.getElementById("newEmployeeAddress").value;
-    const tx = await contract.addEmployee(addr);
-    await tx.wait();
-    document.getElementById("addEmployeeResult").innerText = "Çalışan eklendi: " + addr;
-  } catch (e) {
-    document.getElementById("addEmployeeResult").innerText = "Hata: " + (e.reason || e.message);
+window.addEventListener("load", () => {
+  if (localStorage.getItem("veilpay_autoconnect") === "1" && window.ethereum) {
+    connectWallet().catch(() => {});
   }
-}
-
-async function paySalary() {
-  try {
-    const addr = document.getElementById("payEmployeeAddress").value;
-    const amount = document.getElementById("paySalaryAmount").value;
-    const secret = document.getElementById("paySharedSecret").value;
-    const publicTotal = document.getElementById("payPublicTotal").value;
-
-    const encrypted = await encryptAmount(amount, secret);
-    const tx = await contract.paySalary(addr, encrypted, publicTotal);
-    await tx.wait();
-    document.getElementById("paySalaryResult").innerText =
-      "Ödeme gönderildi. Zincirdeki şifreli veri: " + encrypted;
-  } catch (e) {
-    document.getElementById("paySalaryResult").innerText = "Hata: " + (e.reason || e.message);
-  }
-}
-
-async function getMySalary() {
-  try {
-    const secret = document.getElementById("mySharedSecret").value;
-    const encrypted = await contract.getMySalaryData();
-    const decrypted = await decryptAmount(encrypted, secret);
-    document.getElementById("mySalaryResult").innerText = "Maaşınız: " + decrypted;
-  } catch (e) {
-    document.getElementById("mySalaryResult").innerText = "Hata: " + (e.reason || e.message);
-  }
-}
-
-async function getAsAuditor() {
-  try {
-    const addr = document.getElementById("auditEmployeeAddress").value;
-    const secret = document.getElementById("auditSharedSecret").value;
-    const encrypted = await contract.getEmployeeSalaryDataAsAuditor(addr);
-    const decrypted = await decryptAmount(encrypted, secret);
-    document.getElementById("auditResult").innerText = "Çalışanın maaşı: " + decrypted;
-  } catch (e) {
-    document.getElementById("auditResult").innerText = "Hata: " + (e.reason || e.message);
-  }
-}
-
-async function getTotalPaidOut() {
-  try {
-    const total = await contract.totalPaidOut();
-    document.getElementById("totalResult").innerText = "Toplam ödenen: " + total.toString();
-  } catch (e) {
-    document.getElementById("totalResult").innerText = "Hata: " + (e.reason || e.message);
-  }
-}
+});
 </script>
 </body>
 </html>
