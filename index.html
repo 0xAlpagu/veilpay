@@ -26,7 +26,7 @@
   .logo { font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
   .logo .veil { color: #16181d; }
   .logo .pay { color: #5b3df5; }
-  .tagline { margin-top: 8px; font-size: 12.5px; color: #6b7280; max-width: 420px; line-height: 1.5; text-align: justify; text-align-last: justify; }
+  .tagline { margin-top: 8px; font-size: 13px; color: #6b7280; max-width: 400px; line-height: 1.55; text-align: left; }
 
   .nav {
     display: flex; align-items: center; gap: 26px;
@@ -52,6 +52,7 @@
   .wallet-info { display: none; flex-direction: column; align-items: flex-end; gap: 6px; }
   .wallet-info.show { display: flex; }
   .wallet-addr { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; color: #6b7280; }
+  .usdc-balance { font-size: 13px; font-weight: 700; color: #16181d; }
   .network-badge {
     display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
     color: #16a34a; background: #ecfdf3; border: 1px solid #bbf0cf;
@@ -74,11 +75,16 @@
   .hero-slide {
     position: absolute; inset: 0;
     padding: 28px 40px 64px;
-    opacity: 0; transition: opacity 0.4s ease;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     display: flex; flex-direction: column; justify-content: flex-start;
     overflow: hidden;
   }
-  .hero-slide.active { opacity: 1; }
+  .hero-slide.active {
+    opacity: 1; visibility: visible;
+    transition: opacity 0.35s ease, visibility 0s linear 0s;
+    z-index: 1;
+  }
   .hero-icon {
     width: 40px; height: 40px; border-radius: 10px;
     background: #f5a623; display: flex; align-items: center; justify-content: center;
@@ -88,6 +94,20 @@
   .hero-title { font-size: 24px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; max-width: 620px; }
   .hero-desc { font-size: 13px; line-height: 1.5; opacity: 0.9; max-width: 560px; }
 
+  .hero-progress-track {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: rgba(255,255,255,0.15); z-index: 4; overflow: hidden;
+  }
+  .hero-progress-fill {
+    height: 100%; width: 0%; background: #f5a623;
+  }
+  .hero-progress-fill.animate {
+    animation: fill-progress 4.5s linear forwards;
+  }
+  @keyframes fill-progress {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
   .hero-nav {
     position: absolute; left: 40px; right: 40px; bottom: 20px;
     display: flex; align-items: center; justify-content: space-between;
@@ -189,7 +209,7 @@
 <div class="header">
   <div class="logo-block">
     <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
-    <div class="tagline">Confidential payroll built on Arc Network. A working demonstration of what Arc's privacy architecture can enable.</div>
+    <div class="tagline">Confidential payroll on Arc Network.</div>
   </div>
   <div class="account-block">
     <div class="account-label">MY ACCOUNT</div>
@@ -197,6 +217,7 @@
     <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
     <div class="wallet-info" id="walletInfo">
       <div class="wallet-addr" id="walletAddr"></div>
+      <div class="usdc-balance" id="usdcBalance">— USDC</div>
       <div class="network-badge">ARC TESTNET</div>
       <div class="disconnect-link" onclick="disconnectWallet()">Disconnect</div>
     </div>
@@ -228,6 +249,8 @@
 
 <div class="hero-wrap">
   <div class="hero" id="hero">
+    <div class="hero-progress-track"><div class="hero-progress-fill" id="heroProgress"></div></div>
+
 
     <div class="hero-slide active">
       <div class="hero-icon">🔐</div>
@@ -371,12 +394,16 @@ loadActivityStrip();
 let slideIndex = 0;
 const slides = document.querySelectorAll(".hero-slide");
 const dotsContainer = document.getElementById("heroDots");
+let hoverTimeout;
 slides.forEach((_, i) => {
   const dot = document.createElement("div");
   dot.className = "hero-dot" + (i === 0 ? " active" : "");
   dot.innerText = i + 1;
-  dot.onclick = () => { goToSlide(i); resetTimer(); };
-  dot.onmouseenter = () => { goToSlide(i); resetTimer(); };
+  dot.onclick = () => { clearTimeout(hoverTimeout); goToSlide(i); resetTimer(); };
+  dot.onmouseenter = () => {
+    clearTimeout(hoverTimeout);
+    hoverTimeout = setTimeout(() => { goToSlide(i); resetTimer(); }, 120);
+  };
   dotsContainer.appendChild(dot);
 });
 const dots = document.querySelectorAll(".hero-dot");
@@ -387,16 +414,28 @@ function goToSlide(i) {
   slideIndex = i;
   slides[slideIndex].classList.add("active");
   dots[slideIndex].classList.add("active");
+  restartProgress();
 }
 function nextSlide() { goToSlide((slideIndex + 1) % slides.length); }
 function nextSlideManual() { nextSlide(); resetTimer(); }
 function prevSlide() { goToSlide((slideIndex - 1 + slides.length) % slides.length); resetTimer(); }
+
+const progressFill = document.getElementById("heroProgress");
+function restartProgress() {
+  progressFill.classList.remove("animate");
+  void progressFill.offsetWidth; // force reflow to restart animation
+  progressFill.classList.add("animate");
+}
+restartProgress();
 
 let timer = setInterval(nextSlide, 4500);
 function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 4500); }
 
 // Wallet
 let provider, signer;
+const USDC_ADDRESS = "0x3600000000000000000000000000000000000000";
+const USDC_ABI = ["function balanceOf(address account) external view returns (uint256)"];
+
 async function connectWallet() {
   if (!window.ethereum) return;
   provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -408,6 +447,16 @@ async function connectWallet() {
   document.getElementById("connectBtn").style.display = "none";
   document.getElementById("notConnected").style.display = "none";
   localStorage.setItem("veilpay_autoconnect", "1");
+
+  try {
+    const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, provider);
+    const balance = await usdc.balanceOf(address);
+    const formatted = ethers.utils.formatUnits(balance, 6);
+    const rounded = Math.round(parseFloat(formatted) * 100) / 100;
+    document.getElementById("usdcBalance").innerText = rounded + " USDC";
+  } catch (e) {
+    document.getElementById("usdcBalance").innerText = "USDC balance unavailable";
+  }
 }
 function disconnectWallet() {
   provider = null; signer = null;
