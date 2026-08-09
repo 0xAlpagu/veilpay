@@ -15,7 +15,7 @@
   }
   a { text-decoration: none; color: inherit; }
 
-  .page { max-width: 1160px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 0 24px; }
+  .page { max-width: 1160px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 24px; }
 
   /* Header */
   .header {
@@ -35,33 +35,63 @@
   }
   .nav a:hover { color: #16181d; }
 
-  .account-block { text-align: right; }
+  .account-block { text-align: right; position: relative; }
+  .account-trigger { cursor: default; }
   .account-label {
     font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #9aa0ac;
-    margin-bottom: 8px;
+    margin-bottom: 6px; display: flex; align-items: center; justify-content: flex-end; gap: 4px;
   }
+  .chevron { display: none; font-size: 10px; }
+  .account-block.connected .chevron { display: inline; }
   .not-connected {
-    font-size: 12.5px; color: #b0b4bd; margin-bottom: 8px;
+    font-size: 12.5px; color: #b0b4bd;
   }
+  .account-block.connected .not-connected { display: none; }
+  .wallet-addr-collapsed {
+    display: none;
+    font-family: 'SF Mono', Consolas, monospace; font-size: 13px; font-weight: 600; color: #16181d;
+  }
+  .account-block.connected .wallet-addr-collapsed { display: block; }
+  .account-block.connected .connect-btn { display: none; }
+
   .connect-btn {
     background: #16181d; color: white; border: none;
     padding: 10px 20px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
     cursor: pointer;
   }
   .connect-btn:hover { background: #2a2d36; }
-  .wallet-info { display: none; flex-direction: column; align-items: flex-end; gap: 6px; }
-  .wallet-info.show { display: flex; }
-  .wallet-addr { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; color: #6b7280; }
+
+  .account-dropdown {
+    display: none;
+    position: absolute; top: 100%; right: 0; margin-top: 10px;
+    background: white; border: 1px solid #e6e8ec; border-radius: 12px;
+    padding: 14px 16px; min-width: 220px; text-align: left;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    z-index: 10;
+  }
+  .account-block.connected:hover .account-dropdown { display: block; }
+  .dropdown-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12.5px; margin-bottom: 8px;
+  }
+  .dropdown-label { color: #9aa0ac; font-weight: 600; }
+  .wallet-addr { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; color: #16181d; }
   .usdc-balance { font-size: 13px; font-weight: 700; color: #16181d; }
   .network-badge {
     display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em;
     color: #16a34a; background: #ecfdf3; border: 1px solid #bbf0cf;
-    padding: 3px 9px; border-radius: 6px;
+    padding: 3px 9px; border-radius: 6px; margin-bottom: 10px;
   }
-  .disconnect-link {
-    font-size: 11.5px; color: #9aa0ac; cursor: pointer; margin-top: 2px;
+  .dropdown-actions {
+    display: flex; align-items: center; gap: 6px;
+    padding-top: 8px; border-top: 1px solid #f0f0f2;
   }
-  .disconnect-link:hover { color: #16181d; }
+  .refresh-link, .disconnect-link {
+    font-size: 11.5px; color: #5b3df5; cursor: pointer; font-weight: 600;
+  }
+  .disconnect-link { color: #9aa0ac; }
+  .refresh-link:hover, .disconnect-link:hover { color: #16181d; }
+  .dropdown-sep { color: #d5d7dc; font-size: 11px; }
 
   /* Hero carousel */
   .hero-wrap { padding: 0; }
@@ -69,12 +99,12 @@
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, #2a1f7a, #5b3df5);
     border-radius: 18px;
-    height: 240px;
+    height: 280px;
     color: white;
   }
   .hero-slide {
     position: absolute; inset: 0;
-    padding: 28px 40px 64px;
+    padding: 26px 40px 58px;
     opacity: 0; visibility: hidden;
     transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     display: flex; flex-direction: column; justify-content: flex-start;
@@ -86,13 +116,13 @@
     z-index: 1;
   }
   .hero-icon {
-    width: 40px; height: 40px; border-radius: 10px;
+    width: 36px; height: 36px; border-radius: 10px;
     background: #f5a623; display: flex; align-items: center; justify-content: center;
-    font-size: 19px; margin-bottom: 14px; flex-shrink: 0;
+    font-size: 17px; margin-bottom: 10px; flex-shrink: 0;
   }
-  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 8px; }
-  .hero-title { font-size: 24px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; max-width: 620px; }
-  .hero-desc { font-size: 13px; line-height: 1.5; opacity: 0.9; max-width: 560px; }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 6px; }
+  .hero-title { font-size: 22px; font-weight: 800; line-height: 1.18; margin-bottom: 8px; max-width: 600px; }
+  .hero-desc { font-size: 12.5px; line-height: 1.45; opacity: 0.9; max-width: 540px; }
 
   .hero-progress-track {
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -211,15 +241,28 @@
     <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
     <div class="tagline">Confidential payroll on Arc Network.</div>
   </div>
-  <div class="account-block">
-    <div class="account-label">MY ACCOUNT</div>
-    <div class="not-connected" id="notConnected">Not connected</div>
+  <div class="account-block" id="accountBlock">
+    <div class="account-trigger">
+      <div class="account-label">MY ACCOUNT <span id="accountChevron" class="chevron">▾</span></div>
+      <div class="not-connected" id="notConnected">Not connected</div>
+      <div class="wallet-addr-collapsed" id="walletAddrCollapsed"></div>
+    </div>
     <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
-    <div class="wallet-info" id="walletInfo">
-      <div class="wallet-addr" id="walletAddr"></div>
-      <div class="usdc-balance" id="usdcBalance">— USDC</div>
+    <div class="account-dropdown" id="accountDropdown">
+      <div class="dropdown-row">
+        <span class="dropdown-label">Address</span>
+        <span class="wallet-addr" id="walletAddr"></span>
+      </div>
+      <div class="dropdown-row">
+        <span class="dropdown-label">Balance</span>
+        <span class="usdc-balance" id="usdcBalance">— USDC</span>
+      </div>
       <div class="network-badge">ARC TESTNET</div>
-      <div class="disconnect-link" onclick="disconnectWallet()">Disconnect</div>
+      <div class="dropdown-actions">
+        <span class="refresh-link" onclick="refreshBalance()">Refresh</span>
+        <span class="dropdown-sep">·</span>
+        <span class="disconnect-link" onclick="disconnectWallet()">Disconnect</span>
+      </div>
     </div>
   </div>
 </div>
@@ -435,35 +478,40 @@ function resetTimer() { clearInterval(timer); timer = setInterval(nextSlide, 450
 let provider, signer;
 const USDC_ADDRESS = "0x3600000000000000000000000000000000000000";
 const USDC_ABI = ["function balanceOf(address account) external view returns (uint256)"];
+let currentAddress;
 
 async function connectWallet() {
   if (!window.ethereum) return;
   provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
   signer = provider.getSigner();
-  const address = await signer.getAddress();
-  document.getElementById("walletAddr").innerText = address.slice(0,6) + "..." + address.slice(-4);
-  document.getElementById("walletInfo").classList.add("show");
-  document.getElementById("connectBtn").style.display = "none";
-  document.getElementById("notConnected").style.display = "none";
+  currentAddress = await signer.getAddress();
+  const short = currentAddress.slice(0,6) + "..." + currentAddress.slice(-4);
+  document.getElementById("walletAddr").innerText = short;
+  document.getElementById("walletAddrCollapsed").innerText = short;
+  document.getElementById("accountBlock").classList.add("connected");
   localStorage.setItem("veilpay_autoconnect", "1");
+  refreshBalance();
+}
 
+async function refreshBalance() {
+  if (!currentAddress || !provider) return;
+  document.getElementById("usdcBalance").innerText = "…";
   try {
     const usdc = new ethers.Contract(USDC_ADDRESS, USDC_ABI, provider);
-    const balance = await usdc.balanceOf(address);
+    const balance = await usdc.balanceOf(currentAddress);
     const formatted = ethers.utils.formatUnits(balance, 6);
     const rounded = Math.round(parseFloat(formatted) * 100) / 100;
     document.getElementById("usdcBalance").innerText = rounded + " USDC";
   } catch (e) {
-    document.getElementById("usdcBalance").innerText = "USDC balance unavailable";
+    document.getElementById("usdcBalance").innerText = "unavailable";
   }
 }
+
 function disconnectWallet() {
-  provider = null; signer = null;
+  provider = null; signer = null; currentAddress = null;
   localStorage.removeItem("veilpay_autoconnect");
-  document.getElementById("walletInfo").classList.remove("show");
-  document.getElementById("connectBtn").style.display = "inline-block";
-  document.getElementById("notConnected").style.display = "block";
+  document.getElementById("accountBlock").classList.remove("connected");
 }
 window.addEventListener("load", () => {
   if (localStorage.getItem("veilpay_autoconnect") === "1" && window.ethereum) {
