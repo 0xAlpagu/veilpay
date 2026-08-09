@@ -63,9 +63,10 @@
 
   .account-dropdown {
     display: none;
-    position: absolute; top: 100%; right: 0; margin-top: 10px;
+    position: absolute; top: 100%; right: 0; margin-top: 0; padding-top: 22px;
     background: white; border: 1px solid #e6e8ec; border-radius: 12px;
-    padding: 14px 16px; min-width: 220px; text-align: left;
+    padding-left: 16px; padding-right: 16px; padding-bottom: 14px;
+    min-width: 220px; text-align: left;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     z-index: 10;
   }
@@ -99,12 +100,12 @@
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, #2a1f7a, #5b3df5);
     border-radius: 18px;
-    height: 240px;
+    height: 190px;
     color: white;
   }
   .hero-slide {
     position: absolute; inset: 0;
-    padding: 24px 40px 54px;
+    padding: 20px 40px 46px;
     opacity: 0; visibility: hidden;
     transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     display: flex; flex-direction: column; justify-content: flex-start;
@@ -116,13 +117,13 @@
     z-index: 1;
   }
   .hero-icon {
-    width: 34px; height: 34px; border-radius: 9px;
+    width: 30px; height: 30px; border-radius: 8px;
     background: #f5a623; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; margin-bottom: 8px; flex-shrink: 0;
+    font-size: 14px; margin-bottom: 6px; flex-shrink: 0;
   }
-  .hero-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 6px; }
-  .hero-title { font-size: 21px; font-weight: 800; line-height: 1.16; margin-bottom: 6px; max-width: 600px; }
-  .hero-desc { font-size: 12px; line-height: 1.4; opacity: 0.9; max-width: 540px; }
+  .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 4px; }
+  .hero-title { font-size: 18px; font-weight: 800; line-height: 1.15; margin-bottom: 4px; max-width: 600px; }
+  .hero-desc { font-size: 11.5px; line-height: 1.35; opacity: 0.9; max-width: 540px; }
 
   .hero-progress-track {
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -139,21 +140,21 @@
     to { width: 100%; }
   }
   .hero-nav {
-    position: absolute; left: 40px; right: 40px; bottom: 20px;
+    position: absolute; left: 40px; right: 40px; bottom: 14px;
     display: flex; align-items: center; justify-content: space-between;
     z-index: 3;
   }
   .hero-arrow {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 24px; height: 24px; border-radius: 50%;
     background: rgba(255,255,255,0.12); border: none; color: white;
-    font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .hero-arrow:hover { background: rgba(255,255,255,0.22); }
-  .hero-dots { display: flex; gap: 7px; }
+  .hero-dots { display: flex; gap: 6px; }
   .hero-dot {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 19px; height: 19px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6);
+    font-size: 9.5px; font-weight: 700; color: rgba(255,255,255,0.6);
     background: rgba(255,255,255,0.08); cursor: pointer;
   }
   .hero-dot.active { background: white; color: #2a1f7a; }
@@ -199,19 +200,19 @@
 
   /* Cards */
   .section { padding: 0; }
-  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .card {
-    border: 1px solid #e6e8ec; border-radius: 14px; padding: 18px 20px;
+    border: 1px solid #e6e8ec; border-radius: 16px; padding: 26px 24px;
     transition: border-color 0.15s, transform 0.15s;
   }
   .card:hover { border-color: #5b3df5; transform: translateY(-2px); }
   .card-icon {
-    width: 34px; height: 34px; border-radius: 9px; background: #f3f0ff;
-    display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px;
+    width: 56px; height: 56px; border-radius: 14px; background: #f3f0ff;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
   }
-  .card h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 4px; }
-  .card p { font-size: 12px; color: #6b7280; line-height: 1.4; margin-bottom: 10px; }
-  .card-link { font-size: 11.5px; color: #5b3df5; font-weight: 700; }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .card p { font-size: 13px; color: #6b7280; line-height: 1.45; margin-bottom: 12px; }
+  .card-link { font-size: 12.5px; color: #5b3df5; font-weight: 700; }
 
   /* Footer */
   .footer {
@@ -269,20 +270,20 @@
 
 <div class="section">
   <div class="card-grid">
-    <a href="/employer/" class="card">
-      <div class="card-icon">🏢</div>
+    <a href="employer/" class="card">
+      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="#e6ddff"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="#e6ddff"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 6.5h1M7.5 10h1M7.5 13.5h1M10.5 6.5h1M10.5 10h1M10.5 13.5h1" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/><path d="M2 21h20" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
       <h3>Employer</h3>
       <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
       <div class="card-link">Open panel →</div>
     </a>
-    <a href="/employee/" class="card">
-      <div class="card-icon">🙋</div>
+    <a href="employee/" class="card">
+      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#5b3df5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <h3>Employee</h3>
       <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
       <div class="card-link">Open panel →</div>
     </a>
-    <a href="/auditor/" class="card">
-      <div class="card-icon">🔎</div>
+    <a href="auditor/" class="card">
+      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M1 12s4.2-7 11-7 11 7 11 7-4.2 7-11 7-11-7-11-7Z" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="#5b3df5"/></svg></div>
       <h3>Auditor</h3>
       <p>View an employee's salary, if they've granted you access.</p>
       <div class="card-link">Open panel →</div>
