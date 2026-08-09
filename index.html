@@ -22,11 +22,11 @@
     display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 20px;
   }
-  .logo-block { display: flex; flex-direction: column; align-items: flex-start; }
-  .logo { font-size: 42px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .logo-block { display: flex; flex-direction: column; align-items: stretch; }
+  .logo { font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
   .logo .veil { color: #16181d; }
   .logo .pay { color: #5b3df5; }
-  .tagline { margin-top: 6px; font-size: 12.5px; color: #6b7280; max-width: 360px; line-height: 1.45; text-align: left; }
+  .tagline { margin-top: 8px; font-size: 12.5px; color: #6b7280; max-width: 420px; line-height: 1.5; text-align: justify; text-align-last: justify; }
 
   .nav {
     display: flex; align-items: center; gap: 26px;
@@ -39,6 +39,9 @@
   .account-label {
     font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #9aa0ac;
     margin-bottom: 8px;
+  }
+  .not-connected {
+    font-size: 12.5px; color: #b0b4bd; margin-bottom: 8px;
   }
   .connect-btn {
     background: #16181d; color: white; border: none;
@@ -70,9 +73,10 @@
   }
   .hero-slide {
     position: absolute; inset: 0;
-    padding: 30px 40px 0;
+    padding: 28px 40px 64px;
     opacity: 0; transition: opacity 0.4s ease;
     display: flex; flex-direction: column; justify-content: flex-start;
+    overflow: hidden;
   }
   .hero-slide.active { opacity: 1; }
   .hero-icon {
@@ -117,16 +121,19 @@
   .strip-wrap::after { right: 0; background: linear-gradient(270deg, #fff, rgba(255,255,255,0)); }
   .strip-header {
     font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #6b7280;
-    text-transform: uppercase; margin-bottom: 10px;
+    text-transform: uppercase; margin-bottom: 10px; text-align: center;
   }
   .strip-loading { color: #6b7280 !important; font-weight: 600 !important; background: transparent !important; }
   .strip-item .addr { font-family: 'SF Mono', Consolas, monospace; font-weight: 700; color: #16181d; }
   .strip-item .action { color: #4b5060; font-weight: 500; font-size: 13.5px; }
   .strip-item .time { color: #9aa0ac; font-weight: 600; font-size: 12px; }
+  .strip-center { display: flex; justify-content: center; overflow: hidden; }
   .strip {
     display: flex; gap: 14px; align-items: center;
-    animation: scroll-strip 26s linear infinite;
     width: max-content;
+  }
+  .strip.marquee {
+    animation: scroll-strip 26s linear infinite;
   }
   .strip-item {
     display: flex; align-items: center; gap: 9px;
@@ -184,20 +191,38 @@
     <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
     <div class="tagline">Confidential payroll built on Arc Network. A working demonstration of what Arc's privacy architecture can enable.</div>
   </div>
-  <div class="nav">
-    <a href="/employer/">EMPLOYER</a>
-    <a href="/employee/">EMPLOYEE</a>
-    <a href="/auditor/">AUDITOR</a>
-    <a href="https://github.com/0xAlpagu/veilpay" target="_blank">GITHUB</a>
-  </div>
   <div class="account-block">
     <div class="account-label">MY ACCOUNT</div>
+    <div class="not-connected" id="notConnected">Not connected</div>
     <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
     <div class="wallet-info" id="walletInfo">
       <div class="wallet-addr" id="walletAddr"></div>
       <div class="network-badge">ARC TESTNET</div>
       <div class="disconnect-link" onclick="disconnectWallet()">Disconnect</div>
     </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="card-grid">
+    <a href="/employer/" class="card">
+      <div class="card-icon">🏢</div>
+      <h3>Employer</h3>
+      <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
+    <a href="/employee/" class="card">
+      <div class="card-icon">🙋</div>
+      <h3>Employee</h3>
+      <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
+    <a href="/auditor/" class="card">
+      <div class="card-icon">🔎</div>
+      <h3>Auditor</h3>
+      <p>View an employee's salary, if they've granted you access.</p>
+      <div class="card-link">Open panel →</div>
+    </a>
   </div>
 </div>
 
@@ -242,31 +267,10 @@
 
 <div class="strip-wrap">
   <div class="strip-header">Live activity — who got paid, not how much</div>
-  <div class="strip" id="strip">
-    <div class="strip-item strip-loading">Loading on-chain activity…</div>
-  </div>
-</div>
-
-<div class="section">
-  <div class="card-grid">
-    <a href="/employer/" class="card">
-      <div class="card-icon">🏢</div>
-      <h3>Employer</h3>
-      <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
-    <a href="/employee/" class="card">
-      <div class="card-icon">🙋</div>
-      <h3>Employee</h3>
-      <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
-    <a href="/auditor/" class="card">
-      <div class="card-icon">🔎</div>
-      <h3>Auditor</h3>
-      <p>View an employee's salary, if they've granted you access.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
+  <div class="strip-center" id="stripCenter">
+    <div class="strip" id="strip">
+      <div class="strip-item strip-loading">Loading on-chain activity…</div>
+    </div>
   </div>
 </div>
 
@@ -335,13 +339,27 @@ async function loadActivityStrip() {
       .sort((a, b) => b.ts - a.ts)
       .slice(0, 12);
 
-    const renderItems = [...items, ...items]; // duplicate for seamless scroll
     strip.innerHTML = "";
-    renderItems.forEach(i => {
+    items.forEach(i => {
       const el = document.createElement("div");
       el.className = "strip-item";
       el.innerHTML = `<span class="ico">${i.icon}</span><span class="addr">${shortAddr(i.addr)}</span><span class="action">${i.action}</span><span class="time">${timeAgo(i.ts)}</span>`;
       strip.appendChild(el);
+    });
+    // If the strip doesn't fill the width, keep it centered and static.
+    // If it overflows, duplicate items and animate as a marquee.
+    requestAnimationFrame(() => {
+      const center = document.getElementById("stripCenter");
+      if (strip.scrollWidth > center.clientWidth) {
+        strip.innerHTML = "";
+        [...items, ...items].forEach(i => {
+          const el = document.createElement("div");
+          el.className = "strip-item";
+          el.innerHTML = `<span class="ico">${i.icon}</span><span class="addr">${shortAddr(i.addr)}</span><span class="action">${i.action}</span><span class="time">${timeAgo(i.ts)}</span>`;
+          strip.appendChild(el);
+        });
+        strip.classList.add("marquee");
+      }
     });
   } catch (e) {
     strip.innerHTML = `<div class="strip-item strip-loading">Activity feed unavailable right now.</div>`;
@@ -388,6 +406,7 @@ async function connectWallet() {
   document.getElementById("walletAddr").innerText = address.slice(0,6) + "..." + address.slice(-4);
   document.getElementById("walletInfo").classList.add("show");
   document.getElementById("connectBtn").style.display = "none";
+  document.getElementById("notConnected").style.display = "none";
   localStorage.setItem("veilpay_autoconnect", "1");
 }
 function disconnectWallet() {
@@ -395,6 +414,7 @@ function disconnectWallet() {
   localStorage.removeItem("veilpay_autoconnect");
   document.getElementById("walletInfo").classList.remove("show");
   document.getElementById("connectBtn").style.display = "inline-block";
+  document.getElementById("notConnected").style.display = "block";
 }
 window.addEventListener("load", () => {
   if (localStorage.getItem("veilpay_autoconnect") === "1" && window.ethereum) {
