@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeilPay - Corporate</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow-y: auto; overflow-x: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #ffffff; color: #16181d;
+  }
+  a { text-decoration: none; color: inherit; }
+  .page { max-width: 1160px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 10px 24px; gap: 8px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+  .logo-block a { display: flex; flex-direction: column; }
+  .logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .logo .veil { color: #16181d; }
+  .logo .pay { color: #5b3df5; }
+  .back-link { margin-top: 3px; font-size: 12px; color: #4b5563; font-weight: 600; }
+  .back-link:hover { color: #5b3df5; }
+
+  .page-title { font-size: 22px; font-weight: 800; line-height: 1.3; margin: 8px 0 3px; }
+  .page-sub { font-size: 13px; color: #4b5563; line-height: 1.4; margin: 0 0 8px; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card {
+    border: 1px solid #e6e8ec; border-radius: 14px; padding: 22px 20px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover { border-color: #5b3df5; transform: translateY(-2px); }
+  .card-icon {
+    width: 44px; height: 44px; border-radius: 11px; background: #f3f0ff;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
+  }
+  .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+  .card p { font-size: 12.5px; color: #4b5563; line-height: 1.4; margin-bottom: 10px; }
+  .card-link { font-size: 12px; color: #5b3df5; font-weight: 700; }
+
+  .footer {
+    border-top: 1px solid #e6e8ec; margin-top: 10px;
+    padding: 10px 0 0; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+    font-size: 10.5px; color: #4b5563; font-family: 'SF Mono', Consolas, monospace;
+  }
+  .footer a { color: #5b3df5; font-family: -apple-system, sans-serif; font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .page { min-height: auto; padding: 20px; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="header">
+  <div class="logo-block">
+    <a href="../">
+      <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
+      <div class="back-link">← Back to home</div>
+    </a>
+  </div>
+</div>
+
+<div class="page-title">Corporate</div>
+<div class="page-sub">Confidential payroll for teams, pay employees in USDC without exposing individual salaries.</div>
+
+<div class="card-grid">
+  <a href="../employer/" class="card">
+    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="#e6ddff"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="#e6ddff"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 6.5h1M7.5 10h1M7.5 13.5h1M10.5 6.5h1M10.5 10h1M10.5 13.5h1" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/><path d="M2 21h20" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+    <h3>Employer</h3>
+    <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
+    <div class="card-link">Open panel →</div>
+  </a>
+  <a href="../employee/" class="card">
+    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#5b3df5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <h3>Employee</h3>
+    <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
+    <div class="card-link">Open panel →</div>
+  </a>
+  <a href="../auditor/" class="card">
+    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M1 12s4.2-7 11-7 11 7 11 7-4.2 7-11 7-11-7-11-7Z" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="#5b3df5"/></svg></div>
+    <h3>Auditor</h3>
+    <p>View an employee's salary, if they've granted you access.</p>
+    <div class="card-link">Open panel →</div>
+  </a>
+</div>
+
+<div class="footer">
+  <div>Arc Network Testnet · Chain ID <b>5042002</b> &nbsp; USDC <b>0x3600...0000</b> &nbsp; VeilPay <b>0xe472...4DdaA</b></div>
+  <a href="https://github.com/0xAlpagu/veilpay" target="_blank">View source on GitHub</a>
+</div>
+
+</div>
+</body>
+</html>
