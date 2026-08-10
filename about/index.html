@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VeilPay — About</title>
+<title>VeilPay - About</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow-y: auto; overflow-x: hidden; }
@@ -69,17 +69,17 @@
 </div>
 
 <h1>Confidential payments, built on Arc</h1>
-<div class="lede">VeilPay is a working demonstration of what Arc Network's privacy architecture can enable — real encrypted payments, running on real testnet infrastructure today.</div>
+<div class="lede">VeilPay is a working demonstration of what Arc Network's privacy architecture can enable, real encrypted payments, running on real testnet infrastructure today.</div>
 
 <h2>The problem</h2>
-<p>Every transaction on a public blockchain is visible to anyone who looks. Salaries, invoices, personal transfers — the amounts are permanently on display. For a lot of real-world payments, that's not acceptable: nobody wants their coworkers to see their paycheck, or a counterparty to see exactly how a deal was priced.</p>
+<p>Every transaction on a public blockchain is visible to anyone who looks. Salaries, invoices, personal transfers. The amounts are permanently on display. For a lot of real-world payments, that's not acceptable: nobody wants their coworkers to see their paycheck, or a counterparty to see exactly how a deal was priced.</p>
 
 <h2>What VeilPay does</h2>
-<p>VeilPay encrypts the payment amount before it ever reaches the blockchain, using AES-256-GCM in the browser. The sender and recipient addresses stay public — so the system stays auditable and transparent about who's transacting — but the amount is only visible to people explicitly authorized to see it.</p>
+<p>VeilPay encrypts the payment amount before it ever reaches the blockchain, using AES-256-GCM in the browser. The sender and recipient addresses stay public, so the system stays auditable and transparent about who's transacting, but the amount is only visible to people explicitly authorized to see it.</p>
 <p>It's not "hide everything." It's selective: you choose what stays private and who gets to see it.</p>
 
 <h2>How it connects to Arc</h2>
-<p>Arc Network — built by Circle — has announced its own native privacy layer, the Arc Privacy Sector (APS), described in their public whitepaper. It's not live on testnet yet. VeilPay is built against that same interface on purpose: a placeholder contract (<code>MockAPS</code>) mirrors the whitepaper's design today, so when the real precompile ships, VeilPay's application logic doesn't need to change — just the address it points to.</p>
+<p>Arc Network, built by Circle, has announced its own native privacy layer, the Arc Privacy Sector (APS), described in their public whitepaper. It's not live on testnet yet. VeilPay is built against that same interface on purpose: a placeholder contract (<code>MockAPS</code>) mirrors the whitepaper's design today, so when the real precompile ships, VeilPay's application logic doesn't need to change, just the address it points to.</p>
 
 <div class="fact-grid">
   <div class="fact">
@@ -98,7 +98,7 @@
 
 <h2>Two ways to use it</h2>
 <p><strong>For businesses:</strong> run payroll without publishing what each employee earns. Fund payroll in USDC, allocate encrypted amounts, and let employees decrypt and withdraw on their own terms.</p>
-<p><strong>For individuals:</strong> send a confidential payment to anyone — the amount stays hidden until they claim it.</p>
+<p><strong>For individuals:</strong> send a confidential payment to anyone. The amount stays hidden until they claim it.</p>
 
 <div class="footer">
   <div>Arc Network Testnet · Chain ID <b>5042002</b></div>
