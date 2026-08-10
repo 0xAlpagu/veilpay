@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VeilPay — Confidential Payroll on Arc</title>
+<title>VeilPay - Confidential Payroll on Arc</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -305,7 +305,7 @@
       </div>
       <div class="dropdown-row">
         <span class="dropdown-label">Balance</span>
-        <span class="usdc-balance" id="usdcBalance">— USDC</span>
+        <span class="usdc-balance" id="usdcBalance">- USDC</span>
       </div>
       <div class="network-badge">ARC TESTNET</div>
       <div class="dropdown-actions">
@@ -337,7 +337,7 @@
 <div class="why-band">
   <div class="why-text">
     <strong>Every payment on a public blockchain is visible to anyone.</strong>
-    VeilPay encrypts the amount — the sender and recipient stay public, but only people you authorize can see how much moved.
+    VeilPay encrypts the amount, the sender and recipient stay public, but only people you authorize can see how much moved.
   </div>
   <div class="why-tag">Built on Arc Network</div>
 </div>
@@ -384,7 +384,7 @@
 </div>
 
 <div class="strip-wrap">
-  <div class="strip-header">Live activity — who got paid, not how much</div>
+  <div class="strip-header">Live activity, who got paid, not how much</div>
   <div class="strip-center" id="stripCenter">
     <div class="strip" id="strip">
       <div class="strip-item strip-loading">Loading on-chain activity…</div>
@@ -404,8 +404,8 @@
 document.getElementById("fUsdc").innerText = "0x3600...0000";
 document.getElementById("fVeilpay").innerText = "0xe472...4DdaA";
 
-// Live activity strip — pulls real SalaryAllocated / SalaryWithdrawn events.
-// Shows WHO was paid and WHEN, never the amount — the point of the product, made visible.
+// Live activity strip, pulls real SalaryAllocated / SalaryWithdrawn events.
+// Shows WHO was paid and WHEN, never the amount, the point of the product, made visible.
 const VEILPAY_ADDRESS_RO = "0xe47234f87382335862Dc2987E48ab9338ea4DdaA";
 const ARC_RPC = "https://rpc.testnet.arc.network";
 const EVENT_ABI = [
@@ -439,7 +439,7 @@ async function loadActivityStrip() {
     ];
 
     if (items.length === 0) {
-      strip.innerHTML = `<div class="strip-item strip-loading">No activity yet — be the first to run payroll on VeilPay.</div>`;
+      strip.innerHTML = `<div class="strip-item strip-loading">No activity yet, be the first to run payroll on VeilPay.</div>`;
       return;
     }
 
