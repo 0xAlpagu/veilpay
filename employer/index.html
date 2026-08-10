@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VeilPay — Employer</title>
+<title>VeilPay - Employer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -142,7 +142,7 @@
     <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
     <div class="account-dropdown" id="accountDropdown">
       <div class="dropdown-row"><span class="dropdown-label">Address</span><span class="wallet-addr" id="walletAddr"></span></div>
-      <div class="dropdown-row"><span class="dropdown-label">Balance</span><span class="usdc-balance" id="usdcBalance">— USDC</span></div>
+      <div class="dropdown-row"><span class="dropdown-label">Balance</span><span class="usdc-balance" id="usdcBalance">- USDC</span></div>
       <div class="network-badge">ARC TESTNET</div>
       <div class="dropdown-actions">
         <span class="refresh-link" onclick="refreshBalance()">Refresh</span>
@@ -158,11 +158,11 @@
 
 <div class="stat-panel">
   <div>
-    <div class="stat-value" id="totalFundedValue">—</div>
+    <div class="stat-value" id="totalFundedValue">-</div>
     <div class="stat-label">TOTAL FUNDED (USDC)</div>
   </div>
   <div style="text-align:right;">
-    <div class="stat-value" id="totalWithdrawnValue">—</div>
+    <div class="stat-value" id="totalWithdrawnValue">-</div>
     <div class="stat-label">TOTAL WITHDRAWN (USDC)</div>
   </div>
   <button class="btn-ghost" onclick="loadStats()">Refresh</button>
