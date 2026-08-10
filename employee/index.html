@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VeilPay — Employee</title>
+<title>VeilPay - Employee</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,7 +99,7 @@
     <button class="connect-btn" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
     <div class="account-dropdown" id="accountDropdown">
       <div class="dropdown-row"><span class="dropdown-label">Address</span><span class="wallet-addr" id="walletAddr"></span></div>
-      <div class="dropdown-row"><span class="dropdown-label">Balance</span><span class="usdc-balance" id="usdcBalance">— USDC</span></div>
+      <div class="dropdown-row"><span class="dropdown-label">Balance</span><span class="usdc-balance" id="usdcBalance">- USDC</span></div>
       <div class="network-badge">ARC TESTNET</div>
       <div class="dropdown-actions">
         <span class="refresh-link" onclick="refreshBalance()">Refresh</span>
@@ -142,7 +142,7 @@
 <div class="panel" style="margin-bottom:4px;">
   <div class="panel-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4.2-7 11-7 11 7 11 7-4.2 7-11 7-11-7-11-7Z" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="#5b3df5"/></svg></div>
   <h3>Grant Auditor Access</h3>
-  <div class="desc">Allow a specific address (e.g. HR or an auditor) to decrypt your salary — they'll need the same passphrase you use.</div>
+  <div class="desc">Allow a specific address (e.g. HR or an auditor) to decrypt your salary, they'll need the same passphrase you use.</div>
   <label>Auditor address</label>
   <input id="auditorAddress" placeholder="0x...">
   <button class="action" onclick="grantAuditor()">Grant Access</button>
@@ -238,7 +238,7 @@ async function getMySalary() {
     const decrypted = await decryptAmount(encrypted, secret);
     document.getElementById("salaryAmount").innerText = decrypted + " USDC";
     showResult("mySalaryResult", "Decrypted successfully.", "ok");
-  } catch (e) { showResult("mySalaryResult", e.reason || e.message || "Could not decrypt — check the passphrase.", "err"); }
+  } catch (e) { showResult("mySalaryResult", e.reason || e.message || "Could not decrypt, check the passphrase.", "err"); }
 }
 
 async function withdrawSalary() {
