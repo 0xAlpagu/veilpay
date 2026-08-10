@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html, body { height: 100%; overflow-y: auto; overflow-x: hidden; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     background: #ffffff;
@@ -15,7 +15,7 @@
   }
   a { text-decoration: none; color: inherit; }
 
-  .page { max-width: 1160px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 0 24px; }
+  .page { max-width: 1160px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; gap: 11px; padding: 14px 24px; }
 
   /* Header */
   .header {
@@ -23,22 +23,27 @@
     flex-wrap: wrap; gap: 20px;
   }
   .logo-block { display: flex; flex-direction: column; align-items: stretch; }
-  .logo { font-size: 56px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .logo { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
   .logo .veil { color: #16181d; }
   .logo .pay { color: #5b3df5; }
-  .tagline { margin-top: 8px; font-size: 13px; color: #6b7280; max-width: 400px; line-height: 1.55; text-align: left; }
+  .tagline { margin-top: 4px; font-size: 12px; color: #4b5563; max-width: 400px; line-height: 1.4; text-align: left; }
 
   .nav {
-    display: flex; align-items: center; gap: 26px;
-    font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
-    color: #6b7280; margin-top: 8px;
+    display: flex; align-items: center; gap: 4px;
+    background: #faf9ff; border: 1px solid #e9e6fb; border-radius: 30px;
+    padding: 5px; margin-top: 8px;
   }
-  .nav a:hover { color: #16181d; }
+  .nav a {
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em;
+    color: #4b5563; padding: 7px 16px; border-radius: 24px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav a:hover { color: #5b3df5; background: white; }
 
   .account-block { text-align: right; position: relative; }
   .account-trigger { cursor: default; }
   .account-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #9aa0ac;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #4b5563;
     margin-bottom: 6px; display: flex; align-items: center; justify-content: flex-end; gap: 4px;
   }
   .chevron { display: none; font-size: 10px; }
@@ -75,7 +80,7 @@
     display: flex; align-items: center; justify-content: space-between;
     font-size: 12.5px; margin-bottom: 8px;
   }
-  .dropdown-label { color: #9aa0ac; font-weight: 600; }
+  .dropdown-label { color: #4b5563; font-weight: 600; }
   .wallet-addr { font-family: 'SF Mono', Consolas, monospace; font-size: 12.5px; color: #16181d; }
   .usdc-balance { font-size: 13px; font-weight: 700; color: #16181d; }
   .network-badge {
@@ -90,7 +95,7 @@
   .refresh-link, .disconnect-link {
     font-size: 11.5px; color: #5b3df5; cursor: pointer; font-weight: 600;
   }
-  .disconnect-link { color: #9aa0ac; }
+  .disconnect-link { color: #4b5563; }
   .refresh-link:hover, .disconnect-link:hover { color: #16181d; }
   .dropdown-sep { color: #d5d7dc; font-size: 11px; }
 
@@ -99,13 +104,13 @@
   .hero {
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, #2a1f7a, #5b3df5);
-    border-radius: 18px;
-    height: 190px;
+    border-radius: 20px;
+    height: 235px;
     color: white;
   }
   .hero-slide {
     position: absolute; inset: 0;
-    padding: 20px 40px 46px;
+    padding: 30px 48px 56px;
     opacity: 0; visibility: hidden;
     transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     display: flex; flex-direction: column; justify-content: flex-start;
@@ -117,13 +122,13 @@
     z-index: 1;
   }
   .hero-icon {
-    width: 30px; height: 30px; border-radius: 8px;
+    width: 42px; height: 42px; border-radius: 11px;
     background: #f5a623; display: flex; align-items: center; justify-content: center;
-    font-size: 14px; margin-bottom: 6px; flex-shrink: 0;
+    font-size: 19px; margin-bottom: 12px; flex-shrink: 0;
   }
-  .hero-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 4px; }
-  .hero-title { font-size: 18px; font-weight: 800; line-height: 1.15; margin-bottom: 4px; max-width: 600px; }
-  .hero-desc { font-size: 11.5px; line-height: 1.35; opacity: 0.9; max-width: 540px; }
+  .hero-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 8px; }
+  .hero-title { font-size: 27px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; max-width: 620px; }
+  .hero-desc { font-size: 14px; line-height: 1.5; opacity: 0.9; max-width: 560px; }
 
   .hero-progress-track {
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -140,28 +145,28 @@
     to { width: 100%; }
   }
   .hero-nav {
-    position: absolute; left: 40px; right: 40px; bottom: 14px;
+    position: absolute; left: 48px; right: 48px; bottom: 20px;
     display: flex; align-items: center; justify-content: space-between;
     z-index: 3;
   }
   .hero-arrow {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     background: rgba(255,255,255,0.12); border: none; color: white;
-    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
   }
   .hero-arrow:hover { background: rgba(255,255,255,0.22); }
-  .hero-dots { display: flex; gap: 6px; }
+  .hero-dots { display: flex; gap: 8px; }
   .hero-dot {
-    width: 19px; height: 19px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 9.5px; font-weight: 700; color: rgba(255,255,255,0.6);
+    font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6);
     background: rgba(255,255,255,0.08); cursor: pointer;
   }
   .hero-dot.active { background: white; color: #2a1f7a; }
 
   /* Module strip */
   .strip-wrap {
-    padding: 4px 0 0;
+    padding: 0;
     overflow: hidden;
     position: relative;
   }
@@ -171,65 +176,102 @@
   .strip-wrap::before { left: 0; background: linear-gradient(90deg, #fff, rgba(255,255,255,0)); }
   .strip-wrap::after { right: 0; background: linear-gradient(270deg, #fff, rgba(255,255,255,0)); }
   .strip-header {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: #6b7280;
-    text-transform: uppercase; margin-bottom: 10px; text-align: center;
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; color: #4b5563;
+    text-transform: uppercase; margin-bottom: 4px; text-align: center;
   }
-  .strip-loading { color: #6b7280 !important; font-weight: 600 !important; background: transparent !important; }
+  .strip-loading { color: #4b5563 !important; font-weight: 600 !important; background: transparent !important; }
   .strip-item .addr { font-family: 'SF Mono', Consolas, monospace; font-weight: 700; color: #16181d; }
-  .strip-item .action { color: #4b5060; font-weight: 500; font-size: 13.5px; }
-  .strip-item .time { color: #9aa0ac; font-weight: 600; font-size: 12px; }
+  .strip-item .action { color: #4b5563; font-weight: 500; font-size: 12px; }
+  .strip-item .time { color: #4b5563; font-weight: 600; font-size: 10.5px; }
   .strip-center { display: flex; justify-content: center; overflow: hidden; }
   .strip {
-    display: flex; gap: 14px; align-items: center;
+    display: flex; gap: 10px; align-items: center;
     width: max-content;
   }
   .strip.marquee {
     animation: scroll-strip 26s linear infinite;
   }
   .strip-item {
-    display: flex; align-items: center; gap: 9px;
-    font-size: 14px; font-weight: 700; color: #16181d; white-space: nowrap;
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 700; color: #16181d; white-space: nowrap;
     background: #f5f4fd; border: 1px solid #e9e6fb;
-    padding: 9px 16px; border-radius: 24px;
+    padding: 6px 12px; border-radius: 20px;
   }
-  .strip-item .ico { font-size: 15px; }
+  .strip-item .ico { font-size: 13px; }
   @keyframes scroll-strip {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
   }
 
+  /* Mode selector cards */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .mode-card {
+    display: flex; align-items: center; gap: 22px;
+    background: #faf9ff; border: 1px solid #e9e6fb; border-radius: 18px;
+    padding: 26px 28px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .mode-card:hover { border-color: #5b3df5; transform: translateY(-2px); }
+  .mode-icon {
+    width: 64px; height: 64px; border-radius: 16px; background: white;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    border: 1px solid #e9e6fb;
+  }
+  .mode-icon svg { width: 32px; height: 32px; }
+  .mode-card h4 { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+  .mode-card p { font-size: 14px; color: #4b5563; line-height: 1.45; }
+
+  /* Why band */
+  .why-band {
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    background: #16181d; border-radius: 16px; padding: 15px 24px;
+  }
+  .why-text { font-size: 14.5px; color: #d5d7dc; line-height: 1.55; max-width: 780px; }
+  .why-text strong { color: white; font-weight: 700; }
+  .why-tag {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; color: #b9a9ff;
+    background: rgba(124,92,255,0.15); border: 1px solid rgba(124,92,255,0.35);
+    padding: 7px 14px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+
   /* Cards */
-  .section { padding: 0; }
-  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .section { padding: 0; margin-bottom: 4px; }
+  .section-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; color: #4b5563;
+    text-transform: uppercase; margin-bottom: 5px;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .card-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .card {
-    border: 1px solid #e6e8ec; border-radius: 16px; padding: 26px 24px;
+    border: 1px solid #e6e8ec; border-radius: 12px; padding: 11px 13px;
     transition: border-color 0.15s, transform 0.15s;
   }
   .card:hover { border-color: #5b3df5; transform: translateY(-2px); }
   .card-icon {
-    width: 56px; height: 56px; border-radius: 14px; background: #f3f0ff;
-    display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+    width: 32px; height: 32px; border-radius: 8px; background: #f3f0ff;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 6px;
   }
-  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
-  .card p { font-size: 13px; color: #6b7280; line-height: 1.45; margin-bottom: 12px; }
-  .card-link { font-size: 12.5px; color: #5b3df5; font-weight: 700; }
+  .card-icon svg { width: 16px; height: 16px; }
+  .card h3 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .card p { font-size: 11px; color: #4b5563; line-height: 1.3; margin-bottom: 5px; }
+  .card-link { font-size: 10.5px; color: #5b3df5; font-weight: 700; }
 
   /* Footer */
   .footer {
     border-top: 1px solid #e6e8ec;
-    padding: 12px 0 0; display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0 0; display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 10px;
-    font-size: 11px; color: #9aa0ac; font-family: 'SF Mono', Consolas, monospace;
+    font-size: 10px; color: #4b5563; font-family: 'SF Mono', Consolas, monospace;
   }
   .footer a { color: #5b3df5; font-family: -apple-system, sans-serif; font-weight: 600; }
 
   @media (max-width: 720px) {
-    html, body { overflow: auto; }
-    .page { height: auto; padding: 20px; }
+    .page { min-height: auto; padding: 20px; }
     .nav { display: none; }
-    .hero { height: 300px; }
-    .hero-title { font-size: 20px; }
+    .hero { height: 260px; }
+    .hero-title { font-size: 18px; }
     .card-grid { grid-template-columns: 1fr; }
+    .card-grid-2 { grid-template-columns: 1fr; }
     .footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -241,6 +283,10 @@
   <div class="logo-block">
     <div class="logo"><span class="veil">Veil</span><span class="pay">Pay</span></div>
     <div class="tagline">Confidential payroll on Arc Network.</div>
+  </div>
+  <div class="nav">
+    <a href="about/">About</a>
+    <a href="contact/">Contact Us</a>
   </div>
   <div class="account-block" id="accountBlock">
     <div class="account-trigger">
@@ -268,27 +314,29 @@
   </div>
 </div>
 
-<div class="section">
-  <div class="card-grid">
-    <a href="employer/" class="card">
-      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="#e6ddff"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="#e6ddff"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 6.5h1M7.5 10h1M7.5 13.5h1M10.5 6.5h1M10.5 10h1M10.5 13.5h1" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/><path d="M2 21h20" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
-      <h3>Employer</h3>
-      <p>Add employees, fund payroll in USDC, and send encrypted salary allocations.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
-    <a href="employee/" class="card">
-      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#5b3df5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <h3>Employee</h3>
-      <p>Decrypt your own salary, withdraw USDC, and manage who can audit your pay.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
-    <a href="auditor/" class="card">
-      <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M1 12s4.2-7 11-7 11 7 11 7-4.2 7-11 7-11-7-11-7Z" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="#5b3df5"/></svg></div>
-      <h3>Auditor</h3>
-      <p>View an employee's salary, if they've granted you access.</p>
-      <div class="card-link">Open panel →</div>
-    </a>
+<div class="mode-grid">
+  <a href="personal/" class="mode-card">
+    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#5b3df5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div>
+      <h4>For Individuals</h4>
+      <p>Send and receive confidential USDC payments, person to person.</p>
+    </div>
+  </a>
+  <a href="corporate/" class="mode-card">
+    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="#e6ddff"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="#e6ddff"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 21h20" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+    <div>
+      <h4>For Businesses</h4>
+      <p>Run payroll without exposing what each employee is paid.</p>
+    </div>
+  </a>
+</div>
+
+<div class="why-band">
+  <div class="why-text">
+    <strong>Every payment on a public blockchain is visible to anyone.</strong>
+    VeilPay encrypts the amount — the sender and recipient stay public, but only people you authorize can see how much moved.
   </div>
+  <div class="why-tag">Built on Arc Network</div>
 </div>
 
 <div class="hero-wrap">
@@ -342,7 +390,7 @@
 </div>
 
 <div class="footer">
-  <div>Arc Network Testnet · Chain ID <b>5042002</b> &nbsp; USDC <b id="fUsdc"></b> &nbsp; VeilPay <b id="fVeilpay"></b></div>
+  <div>Arc Network Testnet · Chain ID <b>5042002</b> &nbsp; USDC <b id="fUsdc"></b> &nbsp; VeilPay <b id="fVeilpay"></b> &nbsp; VeilPersonalPay <b>0x5879...5Ec2</b></div>
   <a href="https://github.com/0xAlpagu/veilpay" target="_blank">View source on GitHub</a>
 </div>
 
