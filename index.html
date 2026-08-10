@@ -110,7 +110,7 @@
   }
   .hero-slide {
     position: absolute; inset: 0;
-    padding: 30px 48px 56px;
+    padding: 22px 44px 50px;
     opacity: 0; visibility: hidden;
     transition: opacity 0.35s ease, visibility 0s linear 0.35s;
     display: flex; flex-direction: column; justify-content: flex-start;
@@ -122,13 +122,13 @@
     z-index: 1;
   }
   .hero-icon {
-    width: 42px; height: 42px; border-radius: 11px;
+    width: 34px; height: 34px; border-radius: 9px;
     background: #f5a623; display: flex; align-items: center; justify-content: center;
-    font-size: 19px; margin-bottom: 12px; flex-shrink: 0;
+    font-size: 16px; margin-bottom: 8px; flex-shrink: 0;
   }
-  .hero-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 8px; }
-  .hero-title { font-size: 27px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; max-width: 620px; }
-  .hero-desc { font-size: 14px; line-height: 1.5; opacity: 0.9; max-width: 560px; }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 5px; }
+  .hero-title { font-size: 21px; font-weight: 800; line-height: 1.18; margin-bottom: 6px; max-width: 600px; }
+  .hero-desc { font-size: 12px; line-height: 1.4; opacity: 0.9; max-width: 540px; }
 
   .hero-progress-track {
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -145,7 +145,7 @@
     to { width: 100%; }
   }
   .hero-nav {
-    position: absolute; left: 48px; right: 48px; bottom: 20px;
+    position: absolute; left: 44px; right: 44px; bottom: 16px;
     display: flex; align-items: center; justify-content: space-between;
     z-index: 3;
   }
@@ -207,18 +207,20 @@
   .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .mode-card {
     display: flex; align-items: center; gap: 22px;
-    background: #faf9ff; border: 1px solid #e9e6fb; border-radius: 18px;
+    background: linear-gradient(135deg, #f6f3ff, #ffffff);
+    border: 1px solid #e9e6fb; border-radius: 18px;
     padding: 26px 28px;
-    transition: border-color 0.15s, transform 0.15s;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
   }
-  .mode-card:hover { border-color: #5b3df5; transform: translateY(-2px); }
+  .mode-card:hover { border-color: #5b3df5; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(91,61,245,0.14); }
   .mode-icon {
-    width: 64px; height: 64px; border-radius: 16px; background: white;
+    width: 64px; height: 64px; border-radius: 16px;
+    background: linear-gradient(135deg, #6a4ce0, #5b3df5);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    border: 1px solid #e9e6fb;
+    box-shadow: 0 6px 16px rgba(91,61,245,0.3);
   }
   .mode-icon svg { width: 32px; height: 32px; }
-  .mode-card h4 { font-size: 21px; font-weight: 800; margin-bottom: 6px; }
+  .mode-card h4 { font-size: 21px; font-weight: 800; margin-bottom: 6px; color: #16181d; }
   .mode-card p { font-size: 14px; color: #4b5563; line-height: 1.45; }
 
   /* Why band */
@@ -316,14 +318,14 @@
 
 <div class="mode-grid">
   <a href="personal/" class="mode-card">
-    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#5b3df5"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#e6ddff" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="white"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="rgba(255,255,255,0.3)" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div>
       <h4>For Individuals</h4>
       <p>Send and receive confidential USDC payments, person to person.</p>
     </div>
   </a>
   <a href="corporate/" class="mode-card">
-    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="#e6ddff"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="#e6ddff"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 21h20" stroke="#5b3df5" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+    <div class="mode-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17" fill="rgba(255,255,255,0.3)"/><path d="M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" fill="rgba(255,255,255,0.3)"/><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M14 21v-9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v9" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 21h20" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg></div>
     <div>
       <h4>For Businesses</h4>
       <p>Run payroll without exposing what each employee is paid.</p>
